@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Layane, eu te amo</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background-color: #ffe6f0;
+      padding: 100px;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 40px;
+      color: #cc0066;
+    }
+    button {
+      font-size: 20px;
+      margin: 20px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+    }
+    #sim {
+      background-color: #00cc66;
+      color: white;
+    }
+    #nao {
+      background-color: #ff6666;
+      color: white;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <h1>Layane, eu te amo ❤️</h1>
+  <p>Vai liberar pra mim?</p>
+  <button id="sim">Sim</button>
+  <button id="nao">Não</button>
+
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    const naoBtn = document.getElementById('nao');
+    const simBtn = document.getElementById('sim');
+    const canvas = document.getElementById('fireworks');
+    const ctx = canvas.getContext('2d');
+
+    naoBtn.addEventListener('click', () => {
+      naoBtn.style.display = 'none';
+      setTimeout(() => {
+        naoBtn.style.display = 'inline-block';
+      }, 1000);
+    });
+
+    simBtn.addEventListener('click', () => {
+      startFireworks();
+    });
+
+    // FOGOS DE ARTIFÍCIO
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function createParticle(x, y) {
+      const colors = ['#ff4d4d', '#66ff66', '#66ccff', '#ffff66', '#ff66ff'];
+      return {
+        x,
+        y,
+        speedX: (Math.random() - 0.5) * 8,
+        speedY: (Math.random() - 0.5) * 8,
+        radius: Math.random() * 3 + 2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        life: 100
+      };
+    }
+
+    function startFireworks() {
+      for (let i = 0; i < 100; i++) {
+        particles.push(createParticle(canvas.width / 2, canvas.height / 2));
+      }
+
+      const interval = setInterval(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, index) => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.life -= 2;
+          p.radius *= 0.96;
+
+          if (p.life <= 0) {
+            particles.splice(index, 1);
+          }
+        });
+
+        if (particles.length === 0) {
+          clearInterval(interval);
+        }
+      }, 16);
+    }
+  </script>
+</body>
+</html>
